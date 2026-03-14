@@ -43,3 +43,6 @@ cover/
 
 # Sphinx documentation
 docs/_build/
+
+# LM-Meter profiling output
+lm_meter_output/
