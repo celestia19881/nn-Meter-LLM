@@ -42,6 +42,7 @@ setup(
         'numpy', 'pandas', 'tqdm', 'networkx', 'requests', 'protobuf', 'PyYAML', 'scikit_learn', 'packaging', 'jsonlines'
     ],
     extras_require={
+        # LM-Meter uses only base dependencies (PyYAML, etc.) already in install_requires
         'lm_meter': [],
     },
 )
