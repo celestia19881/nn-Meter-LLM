@@ -258,6 +258,86 @@ We release the dataset, and provide an interface of `nn_meter.dataset` for users
 
 
 
+# LM-Meter: LLM Inference Latency Profiler for Android
+
+**LM-Meter** extends nn-Meter to support **Large Language Model (LLM)** inference latency profiling on mobile and edge devices. It provides fine-grained, real-time visibility into on-device LLM inference at both **phase** and **kernel** levels.
+
+> **Reference**: Wang et al., "lm-Meter: Unveiling Runtime Inference Latency for On-Device Language Models," Proc. ACM/IEEE SEC, 2025.
+> Original project: [https://github.com/amai-gsu/LM-Meter](https://github.com/amai-gsu/LM-Meter)
+
+## LM-Meter Features
+
+- **Phase-level profiling**: Measures latency for each LLM inference phase (embedding, prefill, decode, softmax, sampling)
+- **Kernel-level profiling**: Measures latency for individual GPU kernels (dequantize, matmul, attention, etc.)
+- **High accuracy**: 99%+ accuracy for phase-level, 95%+ for kernel-level profiling
+- **Low overhead**: < 3% throughput reduction even under constrained CPU modes
+- **Android GPU support**: OpenCL-based profiling on Adreno and Mali GPUs
+
+## Supported Platforms
+
+|            | Android GPU (OpenCL) | iOS GPU (Metal) | NVIDIA Jetson | Coral TPU |
+|:-----------|:-------------------:|:---------------:|:-------------:|:---------:|
+| **MLC LLM** | ✅ | 🚧 | 🚧 | ❌ |
+| **llama.cpp** | 🚧 | 🚧 | 🚧 | ❌ |
+
+## Quick Start (LM-Meter)
+
+### Installation
+
+```bash
+# Install nn-Meter with LM-Meter support
+pip install -e ".[lm_meter]"
+```
+
+### Profile LLM Inference
+
+```python
+from lm_meter import LMProfiler, LMProfilerConfig
+
+config = LMProfilerConfig(profiling_mode="both")
+profiler = LMProfiler(config)
+
+# One-shot: setup, start, wait, stop, analyze
+report = profiler.collect_and_analyze(wait_seconds=120)
+print(report)
+```
+
+### Analyze Existing Traces
+
+```python
+from lm_meter import TraceParser, LatencyAnalyzer
+
+parser = TraceParser()
+events = parser.parse_directory("./traces/")
+
+analyzer = LatencyAnalyzer(events=parser.events)
+print(analyzer.format_report())
+```
+
+### Data Collection via Shell Script
+
+```bash
+cd scripts/lm_meter/
+chmod +x collect_data.sh
+./collect_data.sh --duration 120 --output-dir ./experiment
+```
+
+## LM-Meter Documentation
+
+- [Installation Guide](docs/lm_meter/install.md) — Prerequisites, setup, and build
+- [Usage Guide](docs/lm_meter/usage.md) — Profiling sessions and API reference
+- [Evaluation Guide](docs/lm_meter/eval.md) — Accuracy metrics and result analysis
+- [Troubleshooting](docs/lm_meter/common-errors.md) — Common errors and solutions
+
+## LM-Meter Profiling Results (Reference)
+
+| Model | Phase | LM-Meter (ms) | Ground Truth (ms) | α (%) |
+|:------|:------|:---------------|:-------------------|:------|
+| Llama-3.2-3B | End-to-end | 3640.4104 | 3640.3191 | 99.99 |
+| Gemma-2-2B | End-to-end | 9859.5473 | 9859.4329 | 99.99 |
+
+---
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
@@ -300,5 +380,13 @@ If you find that nn-Meter helps your research, please consider citing it:
     title = {nn-Meter: Towards Accurate Latency Prediction of Deep-Learning Model Inference on Diverse Edge Devices},
     year = {2021},
     url = {https://github.com/microsoft/nn-Meter},
+}
+
+@inproceedings{lmmeter,
+    author = {Wang, Haoxin and Tu, Xiaolong and Ke, Hongyu and Chai, Huirong and Chen, Dawei and Han, Kyungtae},
+    title = {lm-Meter: Unveiling Runtime Inference Latency for On-Device Language Models},
+    booktitle = {Proc. The Tenth ACM/IEEE Symposium on Edge Computing (SEC)},
+    pages = {1--17},
+    year = {2025},
 }
 ```

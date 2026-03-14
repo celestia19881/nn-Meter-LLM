@@ -14,6 +14,7 @@ setup(
     url='https://github.com/microsoft/nn-Meter',
     project_urls={
         'Data of models': 'https://github.com/microsoft/nn-Meter/releases/tag/v1.0-data',
+        'LM-Meter (LLM Profiler)': 'https://github.com/amai-gsu/LM-Meter',
     },
     license = 'MIT',
     classifiers = [
@@ -40,4 +41,8 @@ setup(
     install_requires=[
         'numpy', 'pandas', 'tqdm', 'networkx', 'requests', 'protobuf', 'PyYAML', 'scikit_learn', 'packaging', 'jsonlines'
     ],
+    extras_require={
+        # LM-Meter uses only base dependencies (PyYAML, etc.) already in install_requires
+        'lm_meter': [],
+    },
 )
